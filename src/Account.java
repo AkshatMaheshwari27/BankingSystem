@@ -63,10 +63,23 @@ public class Account {
         if (age < MIN_AGE) {
             throw new IllegalArgumentException("Age must be at least " + MIN_AGE);
         }
-        if (!"Savings".equalsIgnoreCase(accountType) && !"Current".equalsIgnoreCase(accountType)) {
-            throw new IllegalArgumentException("Account type must be 'Savings' or 'Current'");
+
+        // UPDATED: Accept new account types
+        if (!"Savings".equalsIgnoreCase(accountType) &&
+                !"Current".equalsIgnoreCase(accountType) &&
+                !"FIXED_DEPOSIT".equalsIgnoreCase(accountType) &&
+                !"SALARY".equalsIgnoreCase(accountType)) {
+            throw new IllegalArgumentException("Account type must be 'Savings', 'Current', 'FIXED_DEPOSIT', or 'SALARY'");
         }
-        double minReq = "Current".equalsIgnoreCase(accountType) ? MIN_BALANCE_CURRENT : MIN_BALANCE_SAVINGS;
+
+        // UPDATED: Adjust minimum balance requirements dynamically
+        double minReq = MIN_BALANCE_SAVINGS;
+        if ("Current".equalsIgnoreCase(accountType)) {
+            minReq = MIN_BALANCE_CURRENT;
+        } else if ("FIXED_DEPOSIT".equalsIgnoreCase(accountType) || "SALARY".equalsIgnoreCase(accountType)) {
+            minReq = 0.0;
+        }
+
         if (initialBalance < minReq) {
             throw new IllegalArgumentException("Initial balance below minimum required: " + minReq);
         }
@@ -140,7 +153,10 @@ public class Account {
     }
 
     private double getMinimumBalance() {
-        return "Current".equalsIgnoreCase(this.accountType) ? MIN_BALANCE_CURRENT : MIN_BALANCE_SAVINGS;
+        // UPDATED: Ensure withdrawals work smoothly for new account types
+        if ("Current".equalsIgnoreCase(this.accountType)) return MIN_BALANCE_CURRENT;
+        if ("FIXED_DEPOSIT".equalsIgnoreCase(this.accountType) || "SALARY".equalsIgnoreCase(this.accountType)) return 0.0;
+        return MIN_BALANCE_SAVINGS;
     }
 
     private void validateActive() throws InactiveAccountException {
