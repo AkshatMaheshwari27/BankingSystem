@@ -1,7 +1,7 @@
 package com.gdb.logging;
 
 import com.gdb.command.TransactionCommand;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -28,7 +28,7 @@ public class TransactionLogger {
         if (destination != null) {
             return destination.readAll();
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     public void clear() {
@@ -38,9 +38,6 @@ public class TransactionLogger {
     }
 
     public String getDestinationName() {
-        if (destination != null) {
-            return destination.getDestinationName();
-        }
-        return "NONE";
+        return destination != null ? destination.getDestinationName() : "UNKNOWN";
     }
 }

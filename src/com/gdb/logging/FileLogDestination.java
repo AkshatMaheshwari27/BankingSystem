@@ -2,7 +2,6 @@ package com.gdb.logging;
 
 import com.gdb.command.TransactionCommand;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FileLogDestination implements LogDestination {
@@ -17,7 +16,7 @@ public class FileLogDestination implements LogDestination {
         try {
             log.log(cmd);
         } catch (IOException e) {
-            throw new RuntimeException("Error writing to file log", e);
+            throw new RuntimeException("Error writing to file log: " + e.getMessage(), e);
         }
     }
 
@@ -26,7 +25,7 @@ public class FileLogDestination implements LogDestination {
         try {
             return log.readAll();
         } catch (Exception e) {
-            return new ArrayList<>();
+            throw new RuntimeException("Error reading from file log: " + e.getMessage(), e);
         }
     }
 
