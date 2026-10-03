@@ -32,7 +32,7 @@ public class AccountRulesPropertiesLoader {
 
         try {
             if (input == null) {
-                System.err.println("Properties file not found: " + propertyFile);
+                System.err.println("⚠️ Properties file not found: " + propertyFile);
                 System.err.println("   Using default rules for " + accountType);
                 return getDefaultRules(accountType);
             }

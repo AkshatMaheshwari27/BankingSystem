@@ -28,7 +28,7 @@ public class Transaction implements Serializable {
                        TransactionType type, double amount, double balanceAfter,
                        String status, String description, int fromAccount, int toAccount) {
         this.transactionId = transactionId;
-        this.timestamp = timestamp;
+        this.timestamp = timestamp != null ? timestamp : LocalDateTime.now();
         this.accountNumber = accountNumber;
         this.type = type;
         this.amount = amount;
@@ -71,7 +71,9 @@ public class Transaction implements Serializable {
 
     @Override
     public String toString() {
-        return "[" + transactionId + "] " + type + " | Rs. " + amount + " | Balance After: Rs. " + balanceAfter + " | Status: " + status + " | " + description;
+        return "[" + transactionId + "] " + type + " | Rs. " + amount +
+               " | Balance After: Rs. " + balanceAfter + " | Status: " + status +
+               " | " + description;
     }
 
     public static synchronized String generateId() {

@@ -2,6 +2,7 @@ package com.gdb.service;
 
 import com.gdb.domain.*;
 import com.gdb.exceptions.*;
+import java.time.LocalDateTime;
 
 public class TransferService {
 
@@ -37,7 +38,7 @@ public class TransferService {
         transfer(from, to, amount, pin);
         return new Transaction(
             Transaction.generateId(),
-            java.time.LocalDateTime.now(),
+            LocalDateTime.now(),
             from.getAccountNumber(),
             TransactionType.TRANSFER,
             amount,
