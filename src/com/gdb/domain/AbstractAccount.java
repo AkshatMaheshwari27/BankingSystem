@@ -6,7 +6,7 @@ import com.gdb.exceptions.*;
  * AbstractAccount - Defines shared template methods and forces subclasses to implement processDebit.
  * The shared fields and concrete methods below are moved up unchanged from the Activity 7/8 Account class.
  */
-public abstract class AbstractAccount {
+public abstract class AbstractAccount implements IAccount {
     protected String accountNumber;
     protected String name;
     protected int age;
