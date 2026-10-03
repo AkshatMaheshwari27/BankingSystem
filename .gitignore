@@ -28,3 +28,21 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+# Build output
+out/
+bin/
+*.class
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# Antigravity / agent files
+.agents/
+.agent/
+
+# OS
+.DS_Store
+Thumbs.db
