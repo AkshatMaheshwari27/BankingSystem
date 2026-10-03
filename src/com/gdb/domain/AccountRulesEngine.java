@@ -9,9 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Dynamic rule sets loaded from external properties files.
  */
 public class AccountRulesEngine {
-    private static AccountRulesPropertiesLoader savingsLoader =
-        new AccountRulesPropertiesLoader("src/main/resources/config/rules/savings.properties");
-
+    
     private static AccountRulesEngine instance;
     private Map<String, Map<Integer, Rule>> rulesMap;
     private boolean loaded = false;
@@ -42,7 +40,7 @@ public class AccountRulesEngine {
         
         @Override
         public String toString() {
-            return String.format("Min: Rs %,.0f, Interest: %.2f%%, Feature: %s",
+            return String.format("Min: Rs. %,.0f, Interest: %.2f%%, Feature: %s",
                                minBalance, interestRate, featureName);
         }
     }
@@ -62,6 +60,9 @@ public class AccountRulesEngine {
         return instance;
     }
     
+    /**
+     * Load all rules from properties files.
+     */
     public synchronized void loadAllRules() {
         rulesMap = new ConcurrentHashMap<>();
         String[] accountTypes = {"SAVINGS", "CURRENT", "FIXEDDEPOSIT", "SALARY"};
@@ -75,12 +76,18 @@ public class AccountRulesEngine {
         
         loaded = true;
         lastLoadTime = java.time.LocalDateTime.now().toString();
-        System.out.println("Rules loaded for: SAVINGS, CURRENT, FIXEDDEPOSIT, SALARY");
     }
     
+    /**
+     * Hot reload - reload all rules without restarting the application.
+     */
     public synchronized void reloadRules() {
+        System.out.println("\n🔄 Reloading rules...");
         loadAllRules();
+        System.out.println("✅ Rules reloaded successfully!");
     }
+    
+    // ===== Helper Methods =====
     
     private int getTenureBucket(int tenureYears) {
         if (tenureYears < 1) return 0;
@@ -109,6 +116,8 @@ public class AccountRulesEngine {
         }
     }
     
+    // ===== Public API Methods =====
+    
     public double getMinimumBalance(String accountType, int tenureYears) {
         Rule rule = getRule(accountType, tenureYears);
         return rule != null ? rule.getMinBalance() : 0;
@@ -131,9 +140,11 @@ public class AccountRulesEngine {
     }
     
     public double getDailyTransferLimit(String accountType, int tenureYears) {
-        Object val = getAdditionalFeature(accountType, tenureYears, "dailyTransferLimit");
-        if (val == null) return 0.0;
-        return (Double) val;
+        Object limit = getAdditionalFeature(accountType, tenureYears, "dailyTransferLimit");
+        if (limit instanceof Double) {
+            return (Double) limit;
+        }
+        return 0.0;
     }
 
     public boolean hasAccountType(String accountType) {
@@ -148,10 +159,13 @@ public class AccountRulesEngine {
         return lastLoadTime;
     }
     
+    /**
+     * Print all loaded rules.
+     */
     public void printAllRules() {
         System.out.println("\n=== ALL ACCOUNT RULES (FROM PROPERTIES FILES) ===");
         for (String type : rulesMap.keySet()) {
-            System.out.println("\n[Type] " + type + ":");
+            System.out.println("\n📁 " + type + ":");
             Map<Integer, Rule> rules = rulesMap.get(type);
             for (Map.Entry<Integer, Rule> entry : rules.entrySet()) {
                 int bucket = entry.getKey();
@@ -159,6 +173,7 @@ public class AccountRulesEngine {
                 String bucketName = getTenureBucketName(bucket);
                 System.out.printf("  %-25s -> %s%n", bucketName, rule);
                 
+                // Print additional features if any
                 if (!rule.getAdditionalFeatures().isEmpty()) {
                     System.out.print("    Features: ");
                     for (Map.Entry<String, Object> feat : rule.getAdditionalFeatures().entrySet()) {
@@ -170,35 +185,10 @@ public class AccountRulesEngine {
         }
     }
     
+    /**
+     * Get count of account types loaded.
+     */
     public int getAccountTypeCount() {
         return rulesMap.size();
-    }
-
-    // Static helper methods for backwards compatibility with earlier activities
-    public static String getSavingsBucket(int tenureYears) {
-        if (tenureYears >= 5) return "privilege";
-        if (tenureYears >= 3) return "premium";
-        if (tenureYears >= 1) return "standard";
-        return "new";
-    }
-
-    public static double getSavingsMinBalance(int tenureYears) {
-        String key = "min.balance." + getSavingsBucket(tenureYears);
-        return savingsLoader.getDouble(key, 10000.0);
-    }
-
-    public static double getSavingsInterestRate(int tenureYears) {
-        String key = "interest.rate." + getSavingsBucket(tenureYears);
-        return savingsLoader.getDouble(key, 2.70);
-    }
-
-    public static double getCurrentOverdraftLimit(double monthlyTurnover) {
-        return Math.max(25000.0, monthlyTurnover * 2.5);
-    }
-
-    public static double getFDInterestRate(int months) {
-        if (months >= 36) return 7.50;
-        if (months >= 12) return 6.50;
-        return 5.00;
     }
 }
