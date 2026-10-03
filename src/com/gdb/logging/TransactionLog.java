@@ -7,9 +7,6 @@ import java.util.*;
 public class TransactionLog {
     private static final String FILE_PATH = "data/transactions.ser";
 
-    // ============================================================
-    // Helper: AppendableObjectOutputStream (COMPLETE — non-placeholder)
-    // ============================================================
     private static class AppendableObjectOutputStream extends ObjectOutputStream {
         public AppendableObjectOutputStream(OutputStream out) throws IOException {
             super(out);
@@ -22,22 +19,16 @@ public class TransactionLog {
 
     public synchronized void log(TransactionCommand cmd) throws IOException {
         File file = new File(FILE_PATH);
-        File parent = file.getParentFile();
-        if (parent != null && !parent.exists()) {
-            parent.mkdirs();
+        if (file.getParentFile() != null && !file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
         }
-
-        boolean append = file.exists() && file.length() > 0;
-        FileOutputStream fos = new FileOutputStream(file, true);
-        ObjectOutputStream oos;
-        if (append) {
-            oos = new AppendableObjectOutputStream(fos);
-        } else {
-            oos = new ObjectOutputStream(fos);
+        boolean isNewOrEmpty = !file.exists() || file.length() == 0;
+        try (ObjectOutputStream out = isNewOrEmpty
+                ? new ObjectOutputStream(new FileOutputStream(file))
+                : new AppendableObjectOutputStream(new FileOutputStream(file, true))) {
+            out.writeObject(cmd);
+            out.flush();
         }
-        oos.writeObject(cmd);
-        oos.flush();
-        oos.close();
     }
 
     public synchronized List<TransactionCommand> readAll() throws IOException, ClassNotFoundException {
@@ -46,12 +37,13 @@ public class TransactionLog {
         if (!file.exists() || file.length() == 0) {
             return list;
         }
-
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
             while (true) {
                 try {
-                    TransactionCommand cmd = (TransactionCommand) ois.readObject();
-                    list.add(cmd);
+                    Object obj = in.readObject();
+                    if (obj instanceof TransactionCommand) {
+                        list.add((TransactionCommand) obj);
+                    }
                 } catch (EOFException e) {
                     break;
                 }

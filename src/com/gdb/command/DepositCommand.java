@@ -18,12 +18,15 @@ public class DepositCommand implements TransactionCommand {
 
     @Override
     public void execute() throws Exception {
-        Account acc = (Account) account;
-        this.transaction = acc.depositWithTransaction(amount);
+        if (account instanceof Account) {
+            this.transaction = ((Account) account).depositWithTransaction(amount);
+        } else {
+            account.deposit(amount);
+        }
     }
 
     @Override
     public Transaction getTransaction() {
-        return transaction;
+        return this.transaction;
     }
 }

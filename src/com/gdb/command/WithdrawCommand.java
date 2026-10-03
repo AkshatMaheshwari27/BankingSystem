@@ -20,12 +20,15 @@ public class WithdrawCommand implements TransactionCommand {
 
     @Override
     public void execute() throws Exception {
-        Account acc = (Account) account;
-        this.transaction = acc.withdrawWithTransaction(amount, pin);
+        if (account instanceof Account) {
+            this.transaction = ((Account) account).withdrawWithTransaction(amount, pin);
+        } else {
+            account.withdraw(amount, pin);
+        }
     }
 
     @Override
     public Transaction getTransaction() {
-        return transaction;
+        return this.transaction;
     }
 }

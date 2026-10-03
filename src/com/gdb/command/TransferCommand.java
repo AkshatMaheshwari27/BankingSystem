@@ -22,12 +22,11 @@ public class TransferCommand implements TransactionCommand {
 
     @Override
     public void execute() throws Exception {
-        TransferService service = new TransferService();
-        this.transaction = service.transferWithTransaction(fromAccount, toAccount, amount, pin);
+        this.transaction = new TransferService().transferWithTransaction(fromAccount, toAccount, amount, pin);
     }
 
     @Override
     public Transaction getTransaction() {
-        return transaction;
+        return this.transaction;
     }
 }
