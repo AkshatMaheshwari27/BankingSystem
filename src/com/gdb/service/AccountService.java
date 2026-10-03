@@ -14,9 +14,9 @@ import com.gdb.command.TransactionCommand;
 import java.util.*;
 
 public class AccountService {
-    private Map<Integer, IAccount> accounts;
-    private TransactionLogger logger;
-    private TransferService transferService;
+    private final Map<Integer, IAccount> accounts;
+    private final TransactionLogger logger;
+    private final TransferService transferService;
     private int nextAccountNumber;
 
     public AccountService(TransactionLogger logger) {
@@ -74,12 +74,12 @@ public class AccountService {
     public Transaction transfer(int fromAccountNumber, int toAccountNumber,
                                 double amount, int pin) throws Exception {
         IAccount fromAccount = accounts.get(fromAccountNumber);
-        if (fromAccount == null) {
-            throw new AccountException("Account not found: " + fromAccountNumber);
-        }
         IAccount toAccount = accounts.get(toAccountNumber);
+        if (fromAccount == null) {
+            throw new AccountException("Source account not found: " + fromAccountNumber);
+        }
         if (toAccount == null) {
-            throw new AccountException("Account not found: " + toAccountNumber);
+            throw new AccountException("Destination account not found: " + toAccountNumber);
         }
         TransferCommand cmd = new TransferCommand(fromAccount, toAccount, amount, pin);
         cmd.execute();
