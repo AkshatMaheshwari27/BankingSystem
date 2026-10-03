@@ -3,11 +3,19 @@ package com.gdb.domain;
 import com.gdb.exceptions.*;
 
 public class SavingsAccount extends AbstractAccount {
-    private double minBalance = 1000.0;
-    private double interestRate = 4.0;
+    private int tenureYears;
+    private double minBalance;
+    private double interestRate;
 
     public SavingsAccount(String accountNumber, String name, int age, double balance, String status, String pin) {
+        this(accountNumber, name, age, balance, status, pin, 0);
+    }
+
+    public SavingsAccount(String accountNumber, String name, int age, double balance, String status, String pin, int tenureYears) {
         super(accountNumber, name, age, balance, "SAVINGS", status, pin);
+        this.tenureYears = tenureYears;
+        this.minBalance = AccountRulesEngine.getSavingsMinBalance(tenureYears);
+        this.interestRate = AccountRulesEngine.getSavingsInterestRate(tenureYears);
     }
 
     public SavingsAccount(String accountNumber, String name, int age, double balance, String status, String pin, double minBalance, double interestRate) {
@@ -18,7 +26,7 @@ public class SavingsAccount extends AbstractAccount {
 
     @Override
     public void processDebit(double amount) throws AccountException {
-        if ((this.balance - amount) < minBalance) {
+        if ((this.balance - amount) < this.minBalance) {
             throw new MinimumBalanceViolationException("Cannot breach minimum balance of Rs " + minBalance);
         }
         this.balance -= amount;
@@ -27,6 +35,10 @@ public class SavingsAccount extends AbstractAccount {
     public void applyInterest() {
         double interest = this.balance * (interestRate / 100.0);
         this.balance += interest;
+    }
+
+    public int getTenureYears() {
+        return tenureYears;
     }
 
     public double getMinBalance() { return minBalance; }
