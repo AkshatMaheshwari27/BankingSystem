@@ -14,11 +14,17 @@ public class AccountFactory {
                 return new CurrentAccount(accNum, name, age, balance, status, pin, 25000.0);
             case "FIXED_DEPOSIT":
             case "FD":
+            case "FIXEDDEPOSIT":
                 return new FixedDepositAccount(accNum, name, age, balance, status, pin, 12, 6.5);
             case "SALARY":
                 return new SalaryAccount(accNum, name, age, balance, status, pin, "TechCorp");
             default:
                 throw new IllegalArgumentException("Unknown account type: " + type);
         }
+    }
+
+    // Overload accepting numeric accNum for activity15 compatibility
+    public static IAccount createAccount(String type, int accNum, String name, int age, double balance) {
+        return createAccount(type, String.valueOf(accNum), name, age, balance, "Active", "1234", 0);
     }
 }

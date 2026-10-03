@@ -55,8 +55,8 @@ public class TestAccountSubclasses {
 
         // >>> Test 2: Account Type and Minimum Balance
         System.out.println("\n>>> Test 2: Account Type and Minimum Balance");
-        System.out.println("Savings Account - Type: " + acc1.getAccountType() + ", Minimum Balance: ₹" + acc1.getMinimumBalance());
-        System.out.println("Current Account - Type: " + acc2.getAccountType() + ", Minimum Balance: ₹" + acc2.getMinimumBalance());
+        System.out.println("Savings Account - Type: " + acc1.getAccountType() + ", Minimum Balance: Rs " + acc1.getMinimumBalance());
+        System.out.println("Current Account - Type: " + acc2.getAccountType() + ", Minimum Balance: Rs " + acc2.getMinimumBalance());
 
         // >>> Test 3: Savings Account - Interest Calculation
         System.out.println("\n>>> Test 3: Savings Account - Interest Calculation");
@@ -74,19 +74,19 @@ public class TestAccountSubclasses {
         printAccountInfo(acc2);
         System.out.println("Overdraft Limit:  " + acc2.getOverdraftLimit());
         System.out.println("Available Overdraft:  " + acc2.getAvailableOverdraft());
-        System.out.println("Overdraft Used: ₹" + acc2.getOverdraftUsed());
+        System.out.println("Overdraft Used: Rs " + acc2.getOverdraftUsed());
         System.out.println("Is Using Overdraft: " + acc2.isUsingOverdraft());
 
         acc2.setPin(1234);
         System.out.println("\nWithdrawing 1500.0 (goes below minimum balance of 1000)");
-        System.out.println("Balance before: ₹" + acc2.getBalance());
+        System.out.println("Balance before: Rs " + acc2.getBalance());
         try {
             acc2.withdraw(1500.0, 1234);
             System.out.println("Withdrawing: 1500.0 - SUCCESS");
         } catch (Exception e) { printException(e); }
         System.out.println("Balance after:  " + acc2.getBalance());
         System.out.println("Overdraft Used: " + acc2.getOverdraftUsed());
-        System.out.println("Available Overdraft: ₹" + acc2.getAvailableOverdraft());
+        System.out.println("Available Overdraft: Rs " + acc2.getAvailableOverdraft());
         System.out.println("Is Using Overdraft: " + acc2.isUsingOverdraft());
 
         System.out.println("\nAttempting to withdraw 4000.0 (would exceed overdraft)");
@@ -95,15 +95,15 @@ public class TestAccountSubclasses {
             acc2.withdraw(4000.0, 1234);
         } catch (Exception e) { printException(e); }
 
-        System.out.println("\nRepaying overdraft of ₹500.0");
+        System.out.println("\nRepaying overdraft of Rs 500.0");
         System.out.println("Balance before repayment: " + acc2.getBalance());
-        System.out.println("Overdraft Used before: ₹" + acc2.getOverdraftUsed());
+        System.out.println("Overdraft Used before: Rs " + acc2.getOverdraftUsed());
         try {
             acc2.repayOverdraft(500.0);
             System.out.println("Repaying 500.0 - SUCCESS");
         } catch (Exception e) { printException(e); }
         System.out.println("Balance after repayment:  " + acc2.getBalance());
-        System.out.println("Overdraft Used after: ₹" + acc2.getOverdraftUsed());
+        System.out.println("Overdraft Used after: Rs " + acc2.getOverdraftUsed());
         System.out.println("Is Using Overdraft: " + acc2.isUsingOverdraft());
 
         // >>> Test 5: Polymorphism - Treating Accounts Uniformly
@@ -117,18 +117,18 @@ public class TestAccountSubclasses {
 
         double totalBalance = 0;
         for (Account acc : allAccounts) {
-            System.out.println("Account #" + acc.getAccountNumber() + " | " + acc.getName() + " (" + acc.getAge() + " yrs) | " + acc.getAccountType() + " | " + acc.getBalance() + " | " + acc.getStatus() + " | Type: " + acc.getAccountType() + ", Min Balance: ₹" + acc.getMinimumBalance());
+            System.out.println("Account #" + acc.getAccountNumber() + " | " + acc.getName() + " (" + acc.getAge() + " yrs) | " + acc.getAccountType() + " | " + acc.getBalance() + " | " + acc.getStatus() + " | Type: " + acc.getAccountType() + ", Min Balance: Rs " + acc.getMinimumBalance());
             totalBalance += acc.getBalance();
         }
         System.out.println("Total accounts: " + allAccounts.size());
-        System.out.println("Total balance across all accounts: ₹" + totalBalance);
+        System.out.println("Total balance across all accounts: Rs " + totalBalance);
 
         // >>> Test 6: Validation - Invalid Creation Attempts
         System.out.println("\n>>> Test 6: Validation - Invalid Creation Attempts");
         System.out.println("Attempting to create SavingsAccount with 300 (below minimum)");
         try { new SavingsAccount(999, "Test", 25, 300.0); } catch (Exception e) { printException(e); }
 
-        System.out.println("Attempting to create CurrentAccount with ₹500 (below minimum)");
+        System.out.println("Attempting to create CurrentAccount with Rs 500 (below minimum)");
         try { new CurrentAccount(999, "Test", 25, 500.0); } catch (Exception e) { printException(e); }
 
         System.out.println("Attempting to create SavingsAccount with age 16");

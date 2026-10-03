@@ -38,13 +38,13 @@
 //
 //        boolean w1 = acc5.withdraw(200.0, 1234);
 //        System.out.println("Withdrawing 200.0: " + (w1 ? "SUCCESS" : "FAILED"));
-//        System.out.println("New balance: ₹" + acc5.getBalance());
+//        System.out.println("New balance: Rs " + acc5.getBalance());
 //        System.out.print("After withdrawal: ");
 //        printAccount(acc5);
 //
 //        boolean w2 = acc5.withdraw(900.0, 1234);
 //        System.out.println("Withdrawing 900.0 (would leave -100): " + (w2 ? "SUCCESS" : "FAILED (Minimum balance violation)"));
-//        System.out.println("Current balance: ₹" + acc5.getBalance());
+//        System.out.println("Current balance: Rs " + acc5.getBalance());
 //
 //        // Test 6: Account Status Management
 //        System.out.println("\n>>> Test 6: Account Status Management");

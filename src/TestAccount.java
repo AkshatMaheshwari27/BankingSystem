@@ -16,7 +16,7 @@
 //        System.out.println("\n>>> 2. Deposit Money");
 //        boolean dep1 = acc1.deposit(500.0);
 //        System.out.println("Depositing 500.0: " + (dep1 ? "SUCCESS" : "FAILED"));
-//        System.out.println("New balance: ₹" + acc1.getBalance());
+//        System.out.println("New balance: Rs " + acc1.getBalance());
 //
 //        boolean dep2 = acc1.deposit(-100.0);
 //        System.out.println("Depositing -100.0: " + (dep2 ? "SUCCESS" : "FAILED (Invalid amount)"));
@@ -24,11 +24,11 @@
 //        System.out.println("\n>>> 3. Withdraw Money");
 //        boolean with1 = acc1.withdraw(200.0);
 //        System.out.println("Withdrawing 200.0: " + (with1 ? "SUCCESS" : "FAILED"));
-//        System.out.println("New balance: ₹" + acc1.getBalance());
+//        System.out.println("New balance: Rs " + acc1.getBalance());
 //
 //        boolean with2 = acc1.withdraw(2000.0);
 //        System.out.println("Withdrawing 2000.0: " + (with2 ? "SUCCESS" : "FAILED (Insufficient balance)"));
-//        System.out.println("Current balance: ₹" + acc1.getBalance());
+//        System.out.println("Current balance: Rs " + acc1.getBalance());
 //
 //        System.out.println("\n>>> 4. Creating Another Account");
 //        Account acc2 = new Account(1002, "Jane Smith", 30, 2000.0, "Current");
@@ -48,14 +48,14 @@
 //        // Test age & account type self-correction (Underage 15 becomes 18, invalid type becomes Savings)
 //        AccountEnhanced enhAcc = new AccountEnhanced(1003, "Alex", 15, 200.0, "Crypto");
 //        System.out.println("Created under 18 with 200 balance:");
-//        System.out.println("Age: " + enhAcc.getAge() + " | Type: " + enhAcc.getAccountType() + " | Balance: ₹" + enhAcc.getBalance());
+//        System.out.println("Age: " + enhAcc.getAge() + " | Type: " + enhAcc.getAccountType() + " | Balance: Rs " + enhAcc.getBalance());
 //
 //        // Test PIN setup & verified withdrawal
 //        enhAcc.setPin(1234);
 //        System.out.println("PIN Set: " + enhAcc.hasPin());
 //
 //        boolean pinWithdraw = enhAcc.withdraw(100.0, 1234);
-//        System.out.println("Withdraw ₹100 with PIN 1234: " + (pinWithdraw ? "SUCCESS" : "FAILED"));
+//        System.out.println("Withdraw Rs 100 with PIN 1234: " + (pinWithdraw ? "SUCCESS" : "FAILED"));
 //
 //        System.out.println("=".repeat(40));
 //        System.out.println("            ALL TESTS COMPLETED!        ");
