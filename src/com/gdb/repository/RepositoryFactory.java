@@ -1,5 +1,9 @@
 package com.gdb.repository;
 
+import com.gdb.db.ConnectionProvider;
+import com.gdb.db.JdbcConnectionProvider;
+import com.gdb.db.SchemaInitializer;
+
 import java.io.*;
 import java.util.Properties;
 
@@ -10,37 +14,53 @@ public class RepositoryFactory {
 
     private static AccountRepository accountRepositoryInstance;
     private static TransactionRepository transactionRepositoryInstance;
+    private static ConnectionProvider connectionProviderInstance;
+
+    public static Properties loadPersistenceProperties() {
+        Properties props = new Properties();
+        String[] paths = {
+            "config/persistence.properties",
+            "src/main/resources/config/persistence.properties",
+            "bin/config/persistence.properties"
+        };
+
+        for (String p : paths) {
+            File f = new File(p);
+            if (f.exists()) {
+                try (InputStream in = new FileInputStream(f)) {
+                    props.load(in);
+                    return props;
+                } catch (IOException ignored) {}
+            }
+        }
+        return props;
+    }
 
     public static String getPersistenceMode() {
-        Properties props = new Properties();
-        InputStream input = RepositoryFactory.class.getResourceAsStream("/config/persistence.properties");
-        if (input == null) {
-            input = RepositoryFactory.class.getResourceAsStream("config/persistence.properties");
+        return loadPersistenceProperties().getProperty("persistence.mode", "memory").trim().toLowerCase();
+    }
+
+    public static synchronized ConnectionProvider getConnectionProvider() {
+        if (connectionProviderInstance == null) {
+            Properties props = loadPersistenceProperties();
+            String url = props.getProperty("persistence.db.url", "jdbc:sqlite:gdb.db");
+            String driver = props.getProperty("persistence.db.driver", "org.sqlite.JDBC");
+            connectionProviderInstance = new JdbcConnectionProvider(url, driver);
+            SchemaInitializer.initialize(connectionProviderInstance);
         }
-        if (input == null) {
-            input = Thread.currentThread().getContextClassLoader().getResourceAsStream("config/persistence.properties");
-        }
-        if (input == null) {
-            try {
-                input = new FileInputStream("src/main/resources/config/persistence.properties");
-            } catch (Exception ignored) {}
-        }
-        if (input != null) {
-            try {
-                props.load(input);
-                input.close();
-            } catch (Exception ignored) {}
-        }
-        return props.getProperty("persistence.mode", "memory");
+        return connectionProviderInstance;
     }
 
     public static synchronized AccountRepository getAccountRepository() {
         if (accountRepositoryInstance == null) {
             String mode = getPersistenceMode();
-            if ("jdbc".equalsIgnoreCase(mode)) {
-                throw new UnsupportedOperationException("JDBC repository not implemented yet - coming in Activity 22");
-            } else if ("file".equalsIgnoreCase(mode)) {
-                throw new UnsupportedOperationException("File repository not implemented yet");
+            if ("memory".equals(mode)) {
+                accountRepositoryInstance = new InMemoryAccountRepository();
+            } else if ("jdbc".equals(mode)) {
+                // Connection provider initialized
+                getConnectionProvider();
+                // Placeholder for Activity 23 JdbcAccountRepository
+                throw new UnsupportedOperationException("JdbcAccountRepository will be implemented in Activity 23. Use memory mode or TestJdbcConnection for Activity 22.");
             } else {
                 accountRepositoryInstance = new InMemoryAccountRepository();
             }
@@ -51,14 +71,25 @@ public class RepositoryFactory {
     public static synchronized TransactionRepository getTransactionRepository() {
         if (transactionRepositoryInstance == null) {
             String mode = getPersistenceMode();
-            if ("jdbc".equalsIgnoreCase(mode)) {
-                throw new UnsupportedOperationException("JDBC repository not implemented yet - coming in Activity 22");
-            } else if ("file".equalsIgnoreCase(mode)) {
-                throw new UnsupportedOperationException("File repository not implemented yet");
+            if ("memory".equals(mode)) {
+                transactionRepositoryInstance = new InMemoryTransactionRepository();
+            } else if ("jdbc".equals(mode)) {
+                getConnectionProvider();
+                // Placeholder for Activity 24 JdbcTransactionRepository
+                throw new UnsupportedOperationException("JdbcTransactionRepository will be implemented in Activity 24. Use memory mode or TestJdbcConnection for Activity 22.");
             } else {
                 transactionRepositoryInstance = new InMemoryTransactionRepository();
             }
         }
         return transactionRepositoryInstance;
+    }
+
+    public static synchronized void reset() {
+        if (connectionProviderInstance != null) {
+            connectionProviderInstance.shutdown();
+            connectionProviderInstance = null;
+        }
+        accountRepositoryInstance = null;
+        transactionRepositoryInstance = null;
     }
 }
