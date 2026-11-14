@@ -57,10 +57,7 @@ public class RepositoryFactory {
             if ("memory".equals(mode)) {
                 accountRepositoryInstance = new InMemoryAccountRepository();
             } else if ("jdbc".equals(mode)) {
-                // Connection provider initialized
-                getConnectionProvider();
-                // Placeholder for Activity 23 JdbcAccountRepository
-                throw new UnsupportedOperationException("JdbcAccountRepository will be implemented in Activity 23. Use memory mode or TestJdbcConnection for Activity 22.");
+                accountRepositoryInstance = new JdbcAccountRepository(getConnectionProvider());
             } else {
                 accountRepositoryInstance = new InMemoryAccountRepository();
             }
@@ -76,7 +73,7 @@ public class RepositoryFactory {
             } else if ("jdbc".equals(mode)) {
                 getConnectionProvider();
                 // Placeholder for Activity 24 JdbcTransactionRepository
-                throw new UnsupportedOperationException("JdbcTransactionRepository will be implemented in Activity 24. Use memory mode or TestJdbcConnection for Activity 22.");
+                throw new UnsupportedOperationException("JdbcTransactionRepository will be implemented in Activity 24. Use memory mode or TestJdbcAccountRepository for Activity 23.");
             } else {
                 transactionRepositoryInstance = new InMemoryTransactionRepository();
             }
