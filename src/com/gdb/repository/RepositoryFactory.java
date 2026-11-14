@@ -58,11 +58,17 @@ public class RepositoryFactory {
 
     public static synchronized AccountRepository getAccountRepository() {
         if (accountRepositoryInstance == null) {
+            Properties props = loadPersistenceProperties();
             String mode = getPersistenceMode();
             if ("memory".equals(mode)) {
                 accountRepositoryInstance = new InMemoryAccountRepository();
             } else if ("jdbc".equals(mode)) {
                 accountRepositoryInstance = new JdbcAccountRepository(getConnectionProvider());
+            } else if ("file".equals(mode)) {
+                String path = props.getProperty("persistence.file.account.path", "data/accounts.csv");
+                boolean backup = Boolean.parseBoolean(props.getProperty("persistence.file.backup.enabled", "true"));
+                int maxBackup = Integer.parseInt(props.getProperty("persistence.file.backup.max", "5"));
+                accountRepositoryInstance = new FileAccountRepository(path, backup, maxBackup);
             } else {
                 accountRepositoryInstance = new InMemoryAccountRepository();
             }
@@ -72,11 +78,17 @@ public class RepositoryFactory {
 
     public static synchronized TransactionRepository getTransactionRepository() {
         if (transactionRepositoryInstance == null) {
+            Properties props = loadPersistenceProperties();
             String mode = getPersistenceMode();
             if ("memory".equals(mode)) {
                 transactionRepositoryInstance = new InMemoryTransactionRepository();
             } else if ("jdbc".equals(mode)) {
                 transactionRepositoryInstance = new JdbcTransactionRepository(getConnectionProvider());
+            } else if ("file".equals(mode)) {
+                String path = props.getProperty("persistence.file.transaction.path", "data/transactions.csv");
+                boolean backup = Boolean.parseBoolean(props.getProperty("persistence.file.backup.enabled", "true"));
+                int maxBackup = Integer.parseInt(props.getProperty("persistence.file.backup.max", "5"));
+                transactionRepositoryInstance = new FileTransactionRepository(path, backup, maxBackup);
             } else {
                 transactionRepositoryInstance = new InMemoryTransactionRepository();
             }
