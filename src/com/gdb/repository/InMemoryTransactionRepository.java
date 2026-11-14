@@ -34,4 +34,21 @@ public class InMemoryTransactionRepository implements TransactionRepository {
     public void clear() {
         transactions.clear();
     }
+
+    @Override
+    public synchronized void transfer(int fromAccountNumber, int toAccountNumber, double amount) {
+        Transaction txn = new Transaction(
+                Transaction.generateId(),
+                java.time.LocalDateTime.now(),
+                fromAccountNumber,
+                com.gdb.domain.TransactionType.TRANSFER,
+                amount,
+                0.0,
+                "SUCCESS",
+                "Transfer to Account #" + toAccountNumber,
+                fromAccountNumber,
+                toAccountNumber
+        );
+        save(txn);
+    }
 }
